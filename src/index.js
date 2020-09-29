@@ -1,4 +1,4 @@
-const { Config } =require('./config.js');
+const { Config } =require('../config.js');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
