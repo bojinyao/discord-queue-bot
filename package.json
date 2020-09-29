@@ -1,0 +1,25 @@
+{
+  "name": "discord-queue-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bojinyao/discord-queue-bot.git"
+  },
+  "author": "Bojin (Max)",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/bojinyao/discord-queue-bot/issues"
+  },
+  "homepage": "https://github.com/bojinyao/discord-queue-bot#readme",
+  "dependencies": {
+    "discord.js": "^12.3.1",
+    "dotenv": "^8.2.0"
+  }
+}
