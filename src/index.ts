@@ -1,10 +1,10 @@
 // ---------------------------- Config ENV first ---------------------------- //
 require('dotenv').config();
 // ----------------------------- regular imports ---------------------------- //
-const { Config } = require('../config.js');
-const Discord = require('discord.js');
+import { Config } from '../config';
+import  Discord = require('discord.js');
 const client = new Discord.Client();
-const { API } = require('./googleAPI');
+import { api } from './googleAPI';
 
 
 // -------------------------------------------------------------------------- //
@@ -12,9 +12,14 @@ const { API } = require('./googleAPI');
 // -------------------------------------------------------------------------- //
 
 client.on('ready', async () => {
-    console.log(`Connected as ${client.user.tag}`);
+    console.log(`Connected as ${client.user?.tag}`);
 
     for (const [id, chan] of Object.entries(Config.channels)) {
+        let channel = client.channels.cache.get(id)
+        if (channel !== undefined) {
+            chan.channel = channel;
+
+        }
         chan.channel = client.channels.cache.get(id);
         if (typeof chan.channel !== 'undefined') {
             chan.channel.send("Connection Successful! (msg will self destruct)")
@@ -55,7 +60,7 @@ client.on('message', async (message) => {
 
 // ---------------------------- helper functions ---------------------------- //
 
-let hasEventNow = async (date, calendarId) => {
+let hasEventNow = async (date: Date, calendarId: String) => {
     let tMin = new Date(date.getTime());
     tMin.setSeconds(tMin.getSeconds() - 1);
 
@@ -67,7 +72,7 @@ let hasEventNow = async (date, calendarId) => {
         timeMin: tMin,
         timeMax: tMax
     }
-    let res = await API.events.list(params);
+    let res = await api.events.list(params);
     return res.data.items.length > 0;
 }
 

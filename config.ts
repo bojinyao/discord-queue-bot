@@ -1,5 +1,5 @@
-const OHQueueID = process.env.OH_QUEUE_CHANNEL_ID;
-const LabQueueID = process.env.LAB_QUEUE_CHANNEL_ID;
+const OHQueueID = process.env.OH_QUEUE_CHANNEL_ID!;
+const LabQueueID = process.env.LAB_QUEUE_CHANNEL_ID!;
 
 const Config = {
     msgSelfDeleteMilSec: 10000,
@@ -19,4 +19,4 @@ const Config = {
     
 }
 
-exports.Config = Config;
+export { Config };
