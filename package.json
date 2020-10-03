@@ -5,15 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./build/index.js",
+    "start": "node ./build/src/index.js",
     "build": "tsc",
+    "dev": "ts-node ./src/index.ts",
     "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bojinyao/discord-queue-bot.git"
   },
-  "author": "Bojin (Max)",
+  "author": "Bojin (Max) Yao",
   "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/bojinyao/discord-queue-bot/issues"

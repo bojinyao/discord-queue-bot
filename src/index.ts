@@ -3,39 +3,7 @@ require('dotenv').config();
 // ----------------------------- regular imports ---------------------------- //
 import Discord = require('discord.js');
 import { api } from './googleAPI';
-
-// ------------------------------- Interfaces ------------------------------- //
-interface ConfigInfo {
-    msgSelfDeleteMilSec: number,
-    channels: Record<string, TextChannelInfo>
-}
-
-interface TextChannelInfo {
-    name?: string,
-    channel?: Discord.TextChannel,
-    calendarId: string
-}
-
-// ------------------------------ Configuration ----------------------------- //
-const OHQueue: TextChannelInfo = {
-    name: 'oh-queue',
-    calendarId: 'berkeley.edu_k2g60q1sehd2u0ujd257jqm7h0@group.calendar.google.com'
-}
-
-const LabQueue: TextChannelInfo = {
-    name: 'lab-queue',
-    calendarId: 'berkeley.edu_d358eocqj23pak3atie23vk35o@group.calendar.google.com'
-}
-
-const Config: ConfigInfo = {
-    msgSelfDeleteMilSec: 10000,
-
-    channels: {
-        "747247932033597531": OHQueue,
-        "747244970108387409": LabQueue
-    }
-
-}
+import { Config } from '../bot-config';
 
 // -------------------------------------------------------------------------- //
 // --------------------------------- Discord -------------------------------- //
@@ -48,7 +16,7 @@ client.on('ready', async () => {
     } else {
         console.log(`Connected as bot!`);
     }
-    
+
     for (const [id, chan] of Object.entries(Config.channels)) {
         let channel = client.channels.cache.get(id)
 
@@ -56,7 +24,7 @@ client.on('ready', async () => {
             // necessary hack: https://github.com/discordjs/discord.js/issues/3622#issuecomment-565550605
             chan.channel = (channel as Discord.TextChannel);
             let msg = await chan.channel.send("Connection Successful! (msg will self destruct)");
-            msg.delete({ timeout: Config.msgSelfDeleteMilSec })
+            msg.delete({ timeout: chan.msgSelfDeleteMilSec ?? Config.msgSelfDeleteMilSec })
                 .catch(console.error);
         }
     }
@@ -78,7 +46,7 @@ client.on('message', async (message) => {
         message.delete().catch(console.error);
         // reply with reason, then delete the reason message
         let msg = await message.reply('No scheduled event right now (msg will self destruct)');
-        msg.delete({ timeout: Config.msgSelfDeleteMilSec }).catch(console.error);
+        msg.delete({ timeout: chan.msgSelfDeleteMilSec ?? Config.msgSelfDeleteMilSec }).catch(console.error);
     }
 
 })

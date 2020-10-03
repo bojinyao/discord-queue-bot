@@ -9,3 +9,4 @@
 - [Examples 1](https://github.com/googleapis/google-api-nodejs-client/issues/1574)
 - [Examples 2](https://github.com/googleapis/google-auth-library-nodejs#json-web-tokens)
 - [Guide](https://anidiots.guide/hosting/heroku)
+- [Deploy Typscript node to Heroku](https://stackoverflow.com/a/46140313)
