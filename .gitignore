@@ -1,5 +1,6 @@
-# dev compilation
+# Custom
 build/
+!.vscode/
 
 # Logs
 logs
