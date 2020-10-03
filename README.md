@@ -103,7 +103,7 @@ If you'd like to compile the project to javascript and run these js instead, do:
 
 ## Additional Resources during development
 
-- [Discord.js Documenation](https://discord.js.org/#/docs/main/stable/general/welcome)
+- [Discord.js Documentation](https://discord.js.org/#/docs/main/stable/general/welcome)
 - [Google API Examples 1](https://github.com/googleapis/google-api-nodejs-client/issues/1574)
 - [Google API Examples 2](https://github.com/googleapis/google-auth-library-nodejs#json-web-tokens)
 - [Deploy Typescript node to Heroku](https://stackoverflow.com/a/46140313)
