@@ -1,7 +1,7 @@
 // ------------------------------ Configuration ----------------------------- //
 export const Config: ConfigInfo = {
     msgSelfDeleteMilSec: 10000,
-
+    rolesNoMod: ["tas", "mods", "dan", "readers", "tutors"],
     channels: {
         "747247932033597531": {
             name: 'oh-queue',

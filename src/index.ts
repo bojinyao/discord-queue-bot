@@ -9,6 +9,8 @@ import { Config } from '../bot-config';
 // --------------------------------- Discord -------------------------------- //
 // -------------------------------------------------------------------------- //
 const client = new Discord.Client();
+// const botCache: BotCache = {};
+
 
 client.on('ready', async () => {
     if (client.user) {
@@ -18,9 +20,8 @@ client.on('ready', async () => {
     }
 
     for (const [id, chan] of Object.entries(Config.channels)) {
-        let channel = client.channels.cache.get(id)
-
-        if (channel && channel.type === 'text') {
+        let channel = client.channels.cache.get(id);
+        if (channel && typeof channel === typeof Discord.TextChannel) {
             // necessary hack: https://github.com/discordjs/discord.js/issues/3622#issuecomment-565550605
             chan.channel = (channel as Discord.TextChannel);
             let msg = await chan.channel.send("Connection Successful! (msg will self destruct)");
@@ -36,6 +37,15 @@ client.on('message', async (message) => {
     // check for relevant channel
     let chan = Config.channels[message.channel.id];
     if (!chan) return;
+    // check if TextChannel
+    if (typeof message.channel !== typeof Discord.TextChannel) return;
+
+    if (message.member) {
+        for (let [_, role] of message.member.roles.cache) {
+            if (chan.rolesNoMod?.includes(role.name)) return;
+            if (Config.rolesNoMod?.includes(role.name)) return;
+        }
+    }
 
     let createdDate = message.createdAt;
     let validMsg = await hasEventNow(createdDate, chan.calendarId)

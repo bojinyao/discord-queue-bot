@@ -2,7 +2,7 @@
 interface ConfigInfo {
     msgSelfDeleteMilSec: number,                // Number of milliseconds before a message self destructs
     channels: Record<string, TextChannelInfo>   // Mappings between Channel ID: string --> TextChannelInfo
-    rolesNoMod?: [string]                       // Discord Roles that are not moderated by the Bot
+    rolesNoMod?: string[]                       // Discord Roles that are not moderated by the Bot
 }
 
 interface TextChannelInfo {
@@ -10,5 +10,10 @@ interface TextChannelInfo {
     name?: string,                              // Name of the channel (for printing purposes only)
     channel?: Discord.TextChannel,              // No need to provide this during obj declaration
     msgSelfDeleteMilSec?: number,               // Override msgSelfDeleteMilSec in ConfigInfo
-    rolesNoMod?: [string]                       // Override rolesNoMod in ConfigInfo
+    rolesNoMod?: string[]                       // Override rolesNoMod in ConfigInfo
+}
+
+// ---------------------------- cache definition ---------------------------- //
+interface BotCache {
+    [channelId: string]: import('discord.js').TextChannel  // channelId string -> Discord.TextChannel
 }
