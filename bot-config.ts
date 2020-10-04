@@ -1,3 +1,5 @@
+// DO NOT CHANGE import
+import { ConfigInfo } from './types';
 // ------------------------------ Configuration ----------------------------- //
 export const Config: ConfigInfo = {
     msgSelfDeleteMilSec: 10000,
