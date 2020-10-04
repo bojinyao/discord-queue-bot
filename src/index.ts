@@ -4,6 +4,7 @@ require('dotenv').config();
 import Discord = require('discord.js');
 import { api } from './googleAPI';
 import { Config } from '../bot-config';
+// import { BotCache } from './internal';
 
 // -------------------------------------------------------------------------- //
 // --------------------------------- Discord -------------------------------- //
@@ -21,7 +22,7 @@ client.on('ready', async () => {
 
     for (const [id, chan] of Object.entries(Config.channels)) {
         let channel = client.channels.cache.get(id);
-        if (channel && typeof channel === typeof Discord.TextChannel) {
+        if (channel && channel.type === 'text') {
             // necessary hack: https://github.com/discordjs/discord.js/issues/3622#issuecomment-565550605
             chan.channel = (channel as Discord.TextChannel);
             let msg = await chan.channel.send("Connection Successful! (msg will self destruct)");
@@ -38,8 +39,9 @@ client.on('message', async (message) => {
     let chan = Config.channels[message.channel.id];
     if (!chan) return;
     // check if TextChannel
-    if (typeof message.channel !== typeof Discord.TextChannel) return;
+    if (message.channel.type !== 'text') return;
 
+    // Check if person in role not moderated
     if (message.member) {
         for (let [_, role] of message.member.roles.cache) {
             if (chan.rolesNoMod?.includes(role.name)) return;

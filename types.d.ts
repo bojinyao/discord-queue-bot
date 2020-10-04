@@ -13,8 +13,3 @@ export interface TextChannelInfo {
     msgSelfDeleteMilSec?: number,               // Override msgSelfDeleteMilSec in ConfigInfo
     rolesNoMod?: string[]                       // Override rolesNoMod in ConfigInfo
 }
-
-// ---------------------------- cache definition ---------------------------- //
-interface BotCache {
-    [channelId: string]: import('discord.js').TextChannel  // channelId string -> Discord.TextChannel
-}
