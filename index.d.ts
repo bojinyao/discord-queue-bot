@@ -1,4 +1,3 @@
-import Discord = require('discord.js');
 // ------------------------------- Interfaces ------------------------------- //
 export interface ConfigInfo {
     msgSelfDeleteMilSec: number,                // Number of milliseconds before a message self destructs
@@ -9,7 +8,6 @@ export interface ConfigInfo {
 export interface TextChannelInfo {
     calendarId: string,                         // Required public Google Calendar ID
     name?: string,                              // Name of the channel (for printing purposes only)
-    channel?: Discord.TextChannel,              // No need to provide this during obj declaration
     msgSelfDeleteMilSec?: number,               // Override msgSelfDeleteMilSec in ConfigInfo
     rolesNoMod?: string[]                       // Override rolesNoMod in ConfigInfo
 }

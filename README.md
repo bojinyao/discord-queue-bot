@@ -78,7 +78,7 @@ You will also need to upload these four values to your Heroku project as `Config
 
 ### Configure the Bot
 
-The file `bot-config.ts` contains (actual deployed) examples of configuration. You can find out more info about each property by checking out [types.d.ts](./src/types.d.ts) file that contains definitions of each property.
+The file `bot-config.ts` contains (actual deployed) examples of configuration. You can find out more info about each property by checking out [index.d.ts](./index.d.ts) file that contains definitions of each property.
 
 Don't worry too much about formatting, your editor should provide warnings if you did anything wrong, or the ts compiler will certainly let you know 🙂
 

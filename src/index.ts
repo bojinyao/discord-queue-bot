@@ -4,13 +4,13 @@ require('dotenv').config();
 import Discord = require('discord.js');
 import { api } from './googleAPI';
 import { Config } from '../bot-config';
-// import { BotCache } from './internal';
+import { BotCache } from './internal';
 
 // -------------------------------------------------------------------------- //
 // --------------------------------- Discord -------------------------------- //
 // -------------------------------------------------------------------------- //
 const client = new Discord.Client();
-// const botCache: BotCache = {};
+const botCache: BotCache = {};
 
 
 client.on('ready', async () => {
@@ -22,10 +22,10 @@ client.on('ready', async () => {
 
     for (const [id, chan] of Object.entries(Config.channels)) {
         let channel = client.channels.cache.get(id);
+        // necessary hack: https://github.com/discordjs/discord.js/issues/3622#issuecomment-565550605
         if (channel && channel.type === 'text') {
-            // necessary hack: https://github.com/discordjs/discord.js/issues/3622#issuecomment-565550605
-            chan.channel = (channel as Discord.TextChannel);
-            let msg = await chan.channel.send("Connection Successful! (msg will self destruct)");
+            botCache.id = (channel as Discord.TextChannel);
+            let msg = await botCache.id.send("Connection Successful! (msg will self destruct)");
             msg.delete({ timeout: chan.msgSelfDeleteMilSec ?? Config.msgSelfDeleteMilSec })
                 .catch(console.error);
         }
