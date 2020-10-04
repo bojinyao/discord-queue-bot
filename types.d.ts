@@ -1,10 +1,11 @@
+import Discord = require('discord.js');
 // ------------------------------- Interfaces ------------------------------- //
-interface ConfigInfo {
+export interface ConfigInfo {
     msgSelfDeleteMilSec: number,                // Number of milliseconds before a message self destructs
     channels: Record<string, TextChannelInfo>   // Mappings between Channel ID: string --> TextChannelInfo
 }
 
-interface TextChannelInfo {
+export interface TextChannelInfo {
     name?: string,                              // Name of the channel (for printing purposes only)
     channel?: Discord.TextChannel,              // No need to provide this during obj declaration
     msgSelfDeleteMilSec?: number,               // Override msgSelfDeleteMilSec in ConfigInfo
