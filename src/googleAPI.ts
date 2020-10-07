@@ -11,6 +11,4 @@ const auth = new google.auth.JWT({
 });
 
 
-const api = google.calendar({version : "v3", auth : auth});
-
-export { api };
+export const api = google.calendar({ version: "v3", auth: auth });
