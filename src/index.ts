@@ -41,29 +41,32 @@ client.on('message', async (message) => {
     // check if TextChannel
     if (message.channel.type !== 'text') return;
 
-    // Check if person in role not moderated
-    if (message.member) {
-        for (let [_, role] of message.member.roles.cache) {
-            // existence of channel's rolesNoMod overrides Config's
-            if (chan.rolesNoMod) {
-                if (chan.rolesNoMod.includes(role.name)) return;
-            } else {
-                if (Config.rolesNoMod?.includes(role.name)) return;
+    if (chan.type === 'queue') {
+        // Check if person in role not moderated
+        if (message.member) {
+            for (let [_, role] of message.member.roles.cache) {
+                // existence of channel's rolesNoMod overrides Config's
+                if (chan.rolesNoMod) {
+                    if (chan.rolesNoMod.includes(role.name)) return;
+                } else {
+                    if (Config.rolesNoMod?.includes(role.name)) return;
+                }
             }
+        }
+
+        let createdDate = message.createdAt;
+        let validMsg = await hasEventNow(createdDate, chan.calendarId)
+            .catch(console.error);
+
+        if (!validMsg) {
+            // delete the invalid message
+            message.delete().catch(console.error);
+            // reply with reason, then delete the reason message
+            let msg = await message.reply('No scheduled event right now (msg will self destruct)');
+            msg.delete({ timeout: chan.msgSelfDeleteMilSec ?? Config.msgSelfDeleteMilSec }).catch(console.error);
         }
     }
 
-    let createdDate = message.createdAt;
-    let validMsg = await hasEventNow(createdDate, chan.calendarId)
-        .catch(console.error);
-
-    if (!validMsg) {
-        // delete the invalid message
-        message.delete().catch(console.error);
-        // reply with reason, then delete the reason message
-        let msg = await message.reply('No scheduled event right now (msg will self destruct)');
-        msg.delete({ timeout: chan.msgSelfDeleteMilSec ?? Config.msgSelfDeleteMilSec }).catch(console.error);
-    }
 
 })
 
