@@ -44,8 +44,12 @@ client.on('message', async (message) => {
     // Check if person in role not moderated
     if (message.member) {
         for (let [_, role] of message.member.roles.cache) {
-            if (chan.rolesNoMod?.includes(role.name)) return;
-            if (Config.rolesNoMod?.includes(role.name)) return;
+            // existence of channel's rolesNoMod overrides Config's
+            if (chan.rolesNoMod) {
+                if (chan.rolesNoMod.includes(role.name)) return;
+            } else {
+                if (Config.rolesNoMod?.includes(role.name)) return;
+            }
         }
     }
 
