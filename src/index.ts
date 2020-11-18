@@ -63,7 +63,9 @@ let hasEventNow = async (date: Date, calendarId: String) => {
     let params = {
         calendarId: calendarId,
         timeMin: tMin,
-        timeMax: tMax
+        timeMax: tMax,
+        showDeleted: false,
+        singleEvents: true,
     }
     let res = await api.events.list(params);
     return res.data.items.length > 0;
