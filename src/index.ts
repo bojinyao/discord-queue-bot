@@ -12,11 +12,10 @@ import { calendar_v3 } from 'googleapis';
 const client = new Discord.Client();
 
 client.on('ready', async () => {
-    if (client.user) {
+    if (client.user)
         console.log(`Connected as ${client.user.tag}`);
-    } else {
+    else
         console.log(`Connected as bot!`);
-    }
 
     for (const [id, chan] of Object.entries(Config.channels)) {
         let channel = client.channels.cache.get(id)
@@ -43,8 +42,8 @@ client.on('message', async (message) => {
         .catch(console.error);
 
     if (!validMsg) {
-        // delete the invalid message
-        message.delete().catch(console.error);
+        // delete the invalid message after 1 sec
+        message.delete({ timeout: 1000 }).catch(console.error);
         // reply with reason, then delete the reason message
         let msg = await message.reply('No scheduled event right now (msg will self destruct)');
         msg.delete({ timeout: chan.msgSelfDeleteMilSec ?? Config.msgSelfDeleteMilSec }).catch(console.error);

@@ -6,8 +6,8 @@ export interface ConfigInfo {
 }
 
 export interface TextChannelInfo {
-    name?: string,                              // Name of the channel (for printing purposes only)
+    calendarId: string                          // [Required] Public Google Calendar ID
+    name?: string,                              // [Recommended] Name of the channel (for printing purposes only)
     channel?: Discord.TextChannel,              // No need to provide this during obj declaration
-    msgSelfDeleteMilSec?: number,               // Override msgSelfDeleteMilSec in ConfigInfo
-    calendarId: string                          // Required public Google Calendar ID 
+    msgSelfDeleteMilSec?: number,               // Override msgSelfDeleteMilSec in ConfigInfo 
 }
