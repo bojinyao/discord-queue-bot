@@ -1,4 +1,4 @@
-const { google } = require('googleapis');
+import { google } from 'googleapis';
 
 // Basically access permission for this service.
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
@@ -11,6 +11,6 @@ const auth = new google.auth.JWT({
 });
 
 
-const api = google.calendar({version : "v3", auth : auth});
+const api = google.calendar({ version: "v3", auth: auth });
 
 export { api };

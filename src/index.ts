@@ -4,6 +4,7 @@ require('dotenv').config();
 import Discord = require('discord.js');
 import { api } from './googleAPI';
 import { Config } from '../bot-config';
+import { calendar_v3 } from 'googleapis';
 
 // -------------------------------------------------------------------------- //
 // --------------------------------- Discord -------------------------------- //
@@ -53,22 +54,24 @@ client.on('message', async (message) => {
 
 // ---------------------------- helper functions ---------------------------- //
 
-let hasEventNow = async (date: Date, calendarId: String) => {
+let hasEventNow = async (date: Date, calendarId: string) => {
     let tMin = new Date(date.getTime());
     tMin.setSeconds(tMin.getSeconds() - 1);
 
     let tMax = new Date(date.getTime());
     tMax.setSeconds(tMax.getSeconds() + 1);
 
-    let params = {
+    let params: calendar_v3.Params$Resource$Events$List = {
         calendarId: calendarId,
-        timeMin: tMin,
-        timeMax: tMax,
+        timeMin: tMin.toISOString(),
+        timeMax: tMax.toISOString(),
         showDeleted: false,
         singleEvents: true,
     }
     let res = await api.events.list(params);
-    return res.data.items.length > 0;
+    // if res data has no items, assume something is there to prevent possible
+    // frustration by end user.
+    return res.data.items?.length ?? 1 > 0
 }
 
 // --------------------- this needs to be at the bottom --------------------- //
