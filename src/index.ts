@@ -5,6 +5,7 @@ import Discord = require('discord.js');
 import { api } from './googleAPI';
 import { Config } from '../bot-config';
 import { calendar_v3 } from 'googleapis';
+import Canvas from './canvas/canvas';
 
 // -------------------------------------------------------------------------- //
 // --------------------------------- Discord -------------------------------- //
@@ -29,6 +30,13 @@ client.on('ready', async () => {
                 .catch(console.error);
         }
     }
+
+    let canvas = new Canvas(
+        "https://bcourses.berkeley.edu",
+        process.env.CANVAS_ACCESS_TOKEN
+    );
+    canvas.get('courses/1493756/users');
+
 })
 
 client.on('message', async (message) => {
