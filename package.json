@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/bojinyao/discord-queue-bot#readme",
   "dependencies": {
+    "axios": "^0.21.1",
     "discord.js": "^12.3.1",
     "dotenv": "^8.2.0",
     "googleapis": "^60.0.1",

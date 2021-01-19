@@ -1,11 +1,16 @@
-import { request } from 'https';
+import axios from 'axios';
 import { unionWith, isEqual } from 'lodash';
+
+/* Canvas LMS has pagination. Maximum number of items
+ * returned by a page is about 100.
+ */
+let PAGE_SIZE = 100;
 
 export class Canvas {
 
-    host: string;
-    accessToken: string;
-    apiVersion: string;
+    private host: string;
+    private accessToken: string;
+    private apiVersion: string;
     private hostUrl: string;
 
     constructor(host: string, accessToken: string, apiVersion = 'v1') {
