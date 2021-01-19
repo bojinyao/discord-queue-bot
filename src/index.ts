@@ -12,19 +12,20 @@ import { calendar_v3 } from 'googleapis';
 const client = new Discord.Client();
 
 client.on('ready', async () => {
+    // Connect with Discord
     if (client.user)
         console.log(`Connected as ${client.user.tag}`);
     else
         console.log(`Connected as bot!`);
 
-    for (const [id, chan] of Object.entries(Config.channels)) {
+    for (const [id, tcInfo] of Object.entries(Config.channels)) {
         let channel = client.channels.cache.get(id)
 
         if (channel && channel.type === 'text') {
             // necessary hack: https://github.com/discordjs/discord.js/issues/3622#issuecomment-565550605
-            chan.channel = (channel as Discord.TextChannel);
-            let msg = await chan.channel.send("Connection Successful! (msg will self destruct)");
-            msg.delete({ timeout: chan.msgSelfDeleteMilSec ?? Config.msgSelfDeleteMilSec })
+            tcInfo.channel = (channel as Discord.TextChannel);
+            let msg = await tcInfo.channel.send("Connection Successful! (msg will self destruct)");
+            msg.delete({ timeout: tcInfo.msgSelfDeleteMilSec ?? Config.msgSelfDeleteMilSec })
                 .catch(console.error);
         }
     }
