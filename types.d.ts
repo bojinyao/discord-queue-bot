@@ -2,7 +2,8 @@ import Discord = require('discord.js');
 // ------------------------------- Interfaces ------------------------------- //
 export interface ConfigInfo {
     msgSelfDeleteMilSec: number,                // Number of milliseconds before a message self destructs
-    channels: Record<string, TextChannelInfo>   // Mappings between Channel ID: string --> TextChannelInfo
+    channels: Record<string, TextChannelInfo>,  // Mappings between Channel ID: string --> TextChannelInfo
+    canvasCourseNum?: string
 }
 
 export interface TextChannelInfo {

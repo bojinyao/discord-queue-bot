@@ -1,8 +1,9 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { strict } from 'assert';
-// import { unionWith, isEqual } from 'lodash';
+import { union } from 'lodash';
 
-/* Canvas LMS has pagination. Maximum number of items
+/**
+ * Canvas LMS has pagination. Maximum number of items
  * returned by a page is about 100: 
  * https://canvas.instructure.com/doc/api/file.pagination.html
  * 
@@ -12,12 +13,13 @@ import { strict } from 'assert';
  * https://canvas.instructure.com/doc/api/file.throttling.html
  * 100 seems to be more cost effective...
  */
-let PAGE_SIZE = 100;
+let PAGE_SIZE = 10;
 
-/* Time out after some time since page size is rather large that's 
+/** 
+ * Time out after some time since page size is rather large that's 
  * previously defined.
  */
-let TIMEOUT = 2000;
+let TIMEOUT = 5000;
 
 
 /**
@@ -32,33 +34,60 @@ export default class Canvas {
 
     constructor(host: string, accessToken: string | undefined, apiVersion = 'v1') {
         this.host = host;
-        this.accessToken = accessToken || ''; // to get around ts compiler check
+        // to get around tsc check
+        this.accessToken = accessToken || '';
         strict(this.accessToken != '', 'Missing Canvas access token');
         this.apiVersion = apiVersion;
         this.instance = axios.create({
             baseURL: `${this.host}/api/${this.apiVersion}`,
-            headers: { 'Authorization': `Bearer ${this.accessToken}` }, // cannot use auth in axios
+            // Axios' auth does not support Bearer
+            headers: { 'Authorization': `Bearer ${this.accessToken}` },
             timeout: TIMEOUT,
             params: {
                 per_page: PAGE_SIZE // set number of items per page
             }
-        })
+        });
     }
 
     /**
      * Send GET request
      * @param endpointRelativeUrl relative Url of endpoint
+     * @param requestConfig AxiosRequestConfig object
+     * @returns Promise<any[]> of request result
      */
-    async get(endpointRelativeUrl: string) {
+    async get(endpointRelativeUrl: string, requestConfig?: AxiosRequestConfig): Promise<any[]> {
         // endpoint must be relative url
-        strict(!endpointRelativeUrl.startsWith('/'), `In GET: ${endpointRelativeUrl} starts with '/'`);
+        strict(!endpointRelativeUrl.startsWith('/'), `[GET]: ${endpointRelativeUrl} cannot start with '/'`);
         try {
-            let res = await this.instance.get(endpointRelativeUrl);
-            console.log(res.data);
-            console.log("-------------")
-            console.log(res.headers);
+            let res = await this.instance.get(endpointRelativeUrl, requestConfig);
+            let body = res.data;
+            /*
+            Here we need to handle pagination when executing a GET request
+            https://canvas.instructure.com/doc/api/file.pagination.html
+            */
+            let checkNext = true;
+            while (checkNext) {
+                checkNext = false;
+                if ('link' in res.headers) {
+                    let links: string = res.headers['link'];
+                    let linksArr = links.split(',');
+                    for (let l of linksArr) {
+                        if (l.lastIndexOf('next') != -1) {
+                            let start = l.indexOf('<') + 1;
+                            let end = l.lastIndexOf('>');
+                            // No need to pass in config again here because link contains
+                            // everything the request needs.
+                            res = await this.instance.get(l.slice(start, end));
+                            body = union(body, res.data);
+                            checkNext = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            return body;
         } catch (error) {
-            console.log(error);
+            throw error;
         }
     }
 }

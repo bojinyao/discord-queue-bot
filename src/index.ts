@@ -35,8 +35,11 @@ client.on('ready', async () => {
         "https://bcourses.berkeley.edu",
         process.env.CANVAS_ACCESS_TOKEN
     );
-    canvas.get('courses/1493756/users');
-
+    let res = await canvas.get('courses/1502093/users', {
+        params: { 'sort': 'email' }
+    });
+    console.log(res);
+    console.log(res.length);
 })
 
 client.on('message', async (message) => {
