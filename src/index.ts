@@ -7,6 +7,7 @@ import { Config } from '../bot-config';
 import { calendar_v3 } from 'googleapis';
 // import { find } from 'lodash';
 import Canvas from './canvas/canvas';
+import { TextChannelInfo } from '../types';
 
 // -------------------------------------------------------------------------- //
 // --------------------------------- Discord -------------------------------- //
@@ -41,63 +42,126 @@ client.on('ready', async () => {
         }
     }
 
-    // Connect with Canvas if needed
-    // and update cache
+    // Connect with Canvas if needed and update cache
     if (Config.canvas) {
         try {
             let res = await canvas.get(`courses/${Config.canvas.courseNum}/users`, {
-                params: { 'sort': 'email' }
+                params: {
+                    'sort': 'email',
+                    'enrollment_type': 'student'
+                }
             });
             GET_CACHE = res;
             GET_CACHE_LAST_UPDATE = new Date();
-            // console.log(res);
-            // console.log(res.length);
+
+            // Try to verify students already joined the server(s)
+            Config.guilds.forEach(async (guildId) => {
+                let curGuild = await client.guilds.fetch(guildId);
+                if (curGuild.available) {
+                    let members = await curGuild.members.fetch();
+                    members.forEach(member => {
+                        if (member.roles.cache.size === 0) {
+                            // student has no role and need to be contacted to assigned roles
+                            contactUser(member);
+                        }
+                    })
+                }
+            })
         } catch (error) {
             console.log(error);
         }
     }
 })
 
+/**
+ * Initiate a DM with an user
+ * @param member member to contact
+ */
+let contactUser = async (member: Discord.GuildMember | Discord.PartialGuildMember) => {
+    if (Config.canvas && Config.canvas.welcomeDM) {
+        await member.send(Config.canvas.welcomeDM).catch(console.error);
+    }
+}
+
 // ------------------------ When Any Message is Sent ------------------------ //
 client.on('message', async (message) => {
     // check if message is a bot
     if (message.author.bot) return;
-    // check for relevant channel
-    let chan = Config.textChannels[message.channel.id];
-    if (!chan) return;
+    /* 
+    Bot's functionality is separated into types of channel
+    */
+    switch (message.channel.type) {
+        case 'text': {
+            // check for relevant text channel
+            let channel = Config.textChannels[message.channel.id];
+            if (channel) {
+                handleTextChannelMessage(channel, message);
+            }
+            break;
+        }
+        case 'dm': {
+            handleDM(message);
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+})
 
+/**
+ * 
+ * @param channelInfo 
+ * @param message 
+ * @returns true if no error, false if some error was raised
+ */
+let handleTextChannelMessage = async (channelInfo: TextChannelInfo, message: Discord.Message) => {
     try {
         let createdDate = message.createdAt;
-        let validMsg = await hasEventNow(createdDate, chan.calendarId);;
+        let validMsg = await hasEventNow(createdDate, channelInfo.calendarId);;
 
         if (!validMsg) {
             // delete the invalid message after 1 sec
             message.delete({ timeout: 1000 });
             // reply with reason, then delete the reason message
             let msg = await message.reply('No scheduled event right now (msg will self destruct)');
-            msg.delete({ timeout: chan.msgSelfDeleteMilSec ?? Config.msgSelfDeleteMilSec });
+            msg.delete({ timeout: channelInfo.msgSelfDeleteMilSec ?? Config.msgSelfDeleteMilSec });
         }
+        return true;
     } catch (error) {
         console.log(error);
+        return false;
     }
-})
+}
+
+let handleDM = async (message: Discord.Message) => {
+
+}
+
+let verifyMember = async (member: Discord.GuildMember) => {
+
+    /*
+    // https://stackoverflow.com/questions/49599732/add-user-to-role-with-newest-discord-js
+    let verifiedRole = guildMember.guild.roles.cache.find(role => role.name === 'verified');
+    if (verifiedRole) {
+        guildMember.roles.add(verifiedRole);
+    }
+    let studentsRole = guildMember.guild.roles.cache.find(role => role.name === 'students');
+    if (studentsRole) {
+        guildMember.roles.add(studentsRole);
+    }
+    */
+}
+
+let assignRolesToUser = async (roles: string[], member: Discord.GuildMember) => {
+
+}
 
 // ----------------------- When A Person Joins Server ----------------------- //
 client.on('guildMemberAdd', async (guildMember) => {
-    if (Config.canvas) {
-        let DMChannel = guildMember.send(Config.canvas.welcomeDM);
-
-
-        // https://stackoverflow.com/questions/49599732/add-user-to-role-with-newest-discord-js
-        let verifiedRole = guildMember.guild.roles.cache.find(role => role.name === 'verified');
-        if (verifiedRole) {
-            guildMember.roles.add(verifiedRole);
-        }
-        let studentsRole = guildMember.guild.roles.cache.find(role => role.name === 'students');
-        if (studentsRole) {
-            guildMember.roles.add(studentsRole);
-        }
-    }
+    // don't send DM to bot or non-existent user
+    if (guildMember.user?.bot ?? true) return;
+    contactUser(guildMember);
 })
 
 // ---------------------------- helper functions ---------------------------- //

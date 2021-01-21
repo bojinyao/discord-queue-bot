@@ -68,7 +68,7 @@ export default class Canvas {
             let checkNext = true;
             while (checkNext) {
                 checkNext = false;
-                if ('link' in res.headers) {
+                if ('link' in res.headers) { // TODO: use parse link header to handle parsing: https://www.npmjs.com/package/parse-link-header
                     let links: string = res.headers['link'];
                     let linksArr = links.split(',');
                     for (let l of linksArr) {
