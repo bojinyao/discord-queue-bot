@@ -7,7 +7,7 @@ export const Config: ConfigInfo = {
     channels: {
         "878531473089654844": {
             name: 'oh-queue',
-            calendarId: 'berkeley.edu_k2g60q1sehd2u0ujd257jqm7h0@group.calendar.google.com',
+            calendarId: 'c_514gq0l99v3cl0he5cttgrlb00@group.calendar.google.com',
         },
         "878531472405958694": {
             name: 'lab-queue',
